@@ -13,6 +13,8 @@
   --color-surface: #ffffff;
   --color-line: #dfe3ec;
   --color-line-strong: #b9c0cf;
+  --color-soft: #eef0fb;
+  --color-soft-hover: #e1e4f5;
   --color-fg: #1b2130;
   --color-muted: #5b6477;
   --color-primary: #4f46e5;
@@ -41,6 +43,8 @@
       --color-surface: #171b24;
       --color-line: #2a303d;
       --color-line-strong: #424a5c;
+      --color-soft: #232838;
+      --color-soft-hover: #2d3345;
       --color-fg: #eef0f5;
       --color-muted: #a2aaba;
       --color-primary: #8b85ff;
