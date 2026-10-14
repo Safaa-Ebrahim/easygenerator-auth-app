@@ -69,6 +69,7 @@ export function ApplicationPage() {
         title="Log out?"
         description="You will need to sign in again to access the application."
         confirmLabel="Log out"
+        confirmVariant="danger"
         onConfirm={() => signOut('user')}
         onCancel={() => setConfirmingLogout(false)}
       />
