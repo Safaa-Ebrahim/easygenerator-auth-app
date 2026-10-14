@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { jsonResponse, mockFetch, renderApp } from '../test/utils'
+import { jsonResponse, mockFetch, renderApp, testUser } from '../test/utils'
 
 async function fillForm(
   user: ReturnType<typeof renderApp>['user'],
@@ -41,16 +41,58 @@ describe('SignUpPage', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('registers the user and continues to sign-in with a success message', async () => {
-    const fetchMock = mockFetch(() =>
-      jsonResponse(201, {
-        message: 'User registered successfully',
-        user: { id: '1', name: 'Ada Lovelace', email: 'ada@example.com' },
-      }),
-    )
+  it('registers the user and signs them straight in', async () => {
+    const fetchMock = mockFetch((url) => {
+      if (url.endsWith('/auth/signup')) {
+        return jsonResponse(201, { message: 'User registered successfully', user: testUser })
+      }
+      if (url.endsWith('/auth/signin')) {
+        return jsonResponse(200, {
+          accessToken: 'jwt-token',
+          tokenType: 'Bearer',
+          expiresIn: 900,
+          user: testUser,
+        })
+      }
+      return jsonResponse(200, {
+        message: 'Protected endpoint accessed successfully',
+        user: { userId: testUser.id, email: testUser.email },
+      })
+    })
     const { user } = renderApp('/signup')
 
     await fillForm(user, { name: '  Ada Lovelace ', email: ' ada@example.com ' })
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Welcome to the application.' }),
+    ).toBeInTheDocument()
+    expect(await screen.findByText('Your account has been created.')).toBeInTheDocument()
+
+    const [signupUrl, signupInit] = fetchMock.mock.calls[0]
+    expect(signupUrl).toMatch(/\/auth\/signup$/)
+    expect(JSON.parse(String(signupInit?.body))).toEqual({
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      password: 'Secur3!pass',
+    })
+    const [signinUrl, signinInit] = fetchMock.mock.calls[1]
+    expect(signinUrl).toMatch(/\/auth\/signin$/)
+    expect(JSON.parse(String(signinInit?.body))).toEqual({
+      email: 'ada@example.com',
+      password: 'Secur3!pass',
+    })
+  })
+
+  it('falls back to the sign-in page when the automatic sign-in fails', async () => {
+    mockFetch((url) =>
+      url.endsWith('/auth/signup')
+        ? jsonResponse(201, { message: 'User registered successfully', user: testUser })
+        : jsonResponse(429, { statusCode: 429, message: 'ThrottlerException: Too Many Requests' }),
+    )
+    const { user } = renderApp('/signup')
+
+    await fillForm(user)
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
     expect(await screen.findByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
@@ -59,14 +101,7 @@ describe('SignUpPage', () => {
     ).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
     expect(screen.getByLabelText('Password')).toHaveValue('')
-
-    const [url, init] = fetchMock.mock.calls[0]
-    expect(url).toMatch(/\/auth\/signup$/)
-    expect(JSON.parse(String(init?.body))).toEqual({
-      name: 'Ada Lovelace',
-      email: 'ada@example.com',
-      password: 'Secur3!pass',
-    })
+    expect(window.sessionStorage.getItem('auth.session')).toBeNull()
   })
 
   it('shows a clear message when the email is already registered', async () => {
