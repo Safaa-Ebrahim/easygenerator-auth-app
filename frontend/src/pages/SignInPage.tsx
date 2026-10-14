@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { describeApiError } from '../api/client'
-import { parseSignInState, type SignInNotice } from '../auth/locationState'
+import { parseSignInState } from '../auth/locationState'
 import { useAuth } from '../auth/useAuth'
 import { Alert } from '../components/Alert'
 import { AuthLayout } from '../components/AuthLayout'
@@ -12,12 +12,6 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useForm } from '../hooks/useForm'
 import { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH, validateSignIn } from '../lib/validation'
 import { ROUTES } from '../paths'
-
-const NOTICE_MESSAGES: Record<SignInNotice, { variant: 'success' | 'info'; text: string }> = {
-  registered: { variant: 'success', text: 'Your account has been created. Please sign in.' },
-  expired: { variant: 'info', text: 'Your session has expired. Please sign in again.' },
-  'signed-out': { variant: 'info', text: 'You have been signed out.' },
-}
 
 export function SignInPage() {
   useDocumentTitle('Sign in')
@@ -46,8 +40,6 @@ export function SignInPage() {
     }
   })
 
-  const notice = routeState.notice && !formError ? NOTICE_MESSAGES[routeState.notice] : null
-
   return (
     <AuthLayout
       title="Welcome back"
@@ -58,8 +50,7 @@ export function SignInPage() {
         </p>
       }
     >
-      {notice && <Alert variant={notice.variant}>{notice.text}</Alert>}
-      {formError && <Alert variant="error">{formError}</Alert>}
+      {formError && <Alert>{formError}</Alert>}
 
       <form className="flex flex-col gap-4" noValidate onSubmit={onSubmit}>
         <TextField
