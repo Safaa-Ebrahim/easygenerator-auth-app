@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '../lib/cn'
 import { Spinner } from './Spinner'
 
-type ButtonVariant = 'primary' | 'secondary'
+export type ButtonVariant = 'primary' | 'secondary' | 'danger'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
@@ -11,9 +11,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string
 }
 
+// Each variant sets its own border color; a shared `border-transparent`
+// would compete with `border-line-strong` and could hide the secondary border.
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-on-primary enabled:hover:bg-primary-hover',
+  primary: 'border-transparent bg-primary text-on-primary enabled:hover:bg-primary-hover',
   secondary: 'border-line-strong bg-surface text-fg enabled:hover:bg-canvas',
+  danger: 'border-transparent bg-danger-solid text-white enabled:hover:bg-danger-solid-hover',
 }
 
 export function Button({
@@ -31,7 +34,7 @@ export function Button({
       {...props}
       type={type}
       className={cn(
-        'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent px-4.5 py-2.5 font-semibold',
+        'inline-flex min-h-9 cursor-pointer items-center justify-center gap-2 rounded-lg border px-4.5 py-2.5 font-semibold',
         'motion-safe:transition-colors disabled:cursor-not-allowed disabled:opacity-70',
         variantClasses[variant],
         className,
