@@ -1,11 +1,11 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import { AuthController } from './auth.controller';
 import type { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   const authService = {
-    signup: jest.fn<(dto: unknown) => Promise<string>>(),
-    signin: jest.fn<(dto: unknown) => Promise<string>>(),
+    signup: vi.fn<(dto: unknown) => Promise<string>>(),
+    signin: vi.fn<(dto: unknown) => Promise<string>>(),
   };
   const controller = new AuthController(authService as unknown as AuthService);
 
