@@ -66,8 +66,8 @@ export function ApplicationPage() {
 
       <ConfirmDialog
         open={confirmingLogout}
-        title="Log out?"
-        description="You will need to sign in again to access the application."
+        title="Confirm Logout"
+        description="Are you sure you want to log out? You will need to sign in again to access your account."
         confirmLabel="Log out"
         confirmVariant="danger"
         onConfirm={() => signOut('user')}
