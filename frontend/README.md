@@ -53,6 +53,10 @@ behind a reverse proxy that routes `/auth/*` to the backend).
   valid email, password ≥ 8 chars with a letter, a number and a special
   character). They give immediate feedback, and the backend still validates
   every request.
+- After a successful sign-up the page signs in with the same credentials and
+  opens `/app`. If that sign-in fails (for example a network error or the
+  sign-in rate limit), the user lands on the sign-in page with the email filled
+  in.
 - `/app` is wrapped in `ProtectedRoute`. On load, the page calls the protected
   endpoint to confirm the token. A `401` ends the local session and sends the
   user back to sign-in with a "session expired" notice. The route guard only
