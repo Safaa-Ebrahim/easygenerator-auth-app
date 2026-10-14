@@ -22,6 +22,9 @@
   --color-danger: #b42318;
   --color-danger-bg: #fef3f2;
   --color-danger-line: #fecdca;
+  /* Solid fill for destructive buttons; white text passes WCAG AA (4.8:1) in both themes. */
+  --color-danger-solid: #d92d20;
+  --color-danger-solid-hover: #b42318;
   --color-success: #067647;
 
   --shadow-card: 0 1px 2px rgb(16 24 40 / 0.05), 0 12px 32px -8px rgb(16 24 40 / 0.12);
