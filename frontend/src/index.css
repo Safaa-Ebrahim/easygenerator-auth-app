@@ -90,3 +90,31 @@
     radial-gradient(50rem 30rem at 110% 110%, rgb(14 165 233 / 0.1), transparent 60%),
     var(--color-canvas);
 }
+
+/*
+ * Move sonner's close button from the top-left corner to inside the toast on
+ * the right. The extra attribute selectors out-rank sonner's own rules, which
+ * are injected at runtime after this stylesheet.
+ */
+[data-sonner-toaster][dir] [data-sonner-toast][data-styled='true'] {
+  padding-right: 2.75rem;
+}
+
+[data-sonner-toaster][dir] [data-sonner-toast][data-styled='true'] [data-close-button] {
+  left: auto;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+}
+
+[data-sonner-toaster][dir] [data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+  opacity: 1;
+  background: rgb(127 127 127 / 0.15);
+}
