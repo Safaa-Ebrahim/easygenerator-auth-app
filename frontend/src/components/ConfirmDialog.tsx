@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef } from 'react'
-import { Button } from './Button'
+import { Button, type ButtonVariant } from './Button'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -7,6 +7,8 @@ interface ConfirmDialogProps {
   description: string
   confirmLabel: string
   cancelLabel?: string
+  /** Use 'danger' for destructive or session-ending actions. */
+  confirmVariant?: ButtonVariant
   onConfirm: () => void
   onCancel: () => void
 }
@@ -21,6 +23,7 @@ export function ConfirmDialog({
   description,
   confirmLabel,
   cancelLabel = 'Cancel',
+  confirmVariant = 'primary',
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -69,7 +72,9 @@ export function ConfirmDialog({
           <Button variant="secondary" onClick={onCancel} data-initial-focus>
             {cancelLabel}
           </Button>
-          <Button onClick={onConfirm}>{confirmLabel}</Button>
+          <Button variant={confirmVariant} onClick={onConfirm}>
+            {confirmLabel}
+          </Button>
         </div>
       </div>
     </dialog>
