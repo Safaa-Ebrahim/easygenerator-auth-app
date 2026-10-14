@@ -1,4 +1,3 @@
-
 import {
   IsEmail,
   IsString,
@@ -6,13 +5,16 @@ import {
   MaxLength,
   Matches,
 } from 'class-validator';
+import { Trim } from './trim';
 
 export class SignupDto {
+  @Trim()
   @IsString()
   @MinLength(3)
   @MaxLength(100)
   name: string;
 
+  @Trim()
   @IsEmail()
   @MaxLength(254)
   email: string;
