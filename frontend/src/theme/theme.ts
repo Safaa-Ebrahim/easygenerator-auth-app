@@ -7,14 +7,18 @@ const STORAGE_KEY = 'theme'
 const DARK_QUERY = '(prefers-color-scheme: dark)'
 
 const listeners = new Set<() => void>()
+/** The explicit choice made in this tab, kept for when storage is unavailable. */
+let chosenTheme: Theme | null = null
+let stopWatching: (() => void) | null = null
 
 function readSavedTheme(): Theme | null {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY)
-    return saved === 'light' || saved === 'dark' ? saved : null
+    if (saved === 'light' || saved === 'dark') return saved
   } catch {
-    return null
+    // Storage unavailable: fall back to this tab's choice.
   }
+  return chosenTheme
 }
 
 function systemTheme(): Theme {
@@ -36,25 +40,48 @@ export function setTheme(theme: Theme) {
   try {
     window.localStorage.setItem(STORAGE_KEY, theme)
   } catch {
-    // Storage unavailable: the choice still applies until reload.
+    // Storage unavailable: remember the choice in memory until reload.
+    chosenTheme = theme
   }
   applyTheme(theme)
 }
 
-function subscribe(listener: () => void) {
-  listeners.add(listener)
-  // Follow live OS theme changes until the user picks a theme.
+/**
+ * Watches for outside theme changes: the OS theme (until the user picks one)
+ * and a choice made in another tab. Shared by all subscribers.
+ */
+function startWatching() {
   const media = window.matchMedia(DARK_QUERY)
   const onSystemChange = () => {
     if (!readSavedTheme()) applyTheme(systemTheme())
   }
+  // Fires only for changes made by other tabs; key is null when storage is cleared.
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === STORAGE_KEY || event.key === null) {
+      applyTheme(readSavedTheme() ?? systemTheme())
+    }
+  }
   media.addEventListener('change', onSystemChange)
+  window.addEventListener('storage', onStorage)
   return () => {
-    listeners.delete(listener)
     media.removeEventListener('change', onSystemChange)
+    window.removeEventListener('storage', onStorage)
   }
 }
 
+function subscribe(listener: () => void) {
+  listeners.add(listener)
+  stopWatching ??= startWatching()
+  return () => {
+    listeners.delete(listener)
+    if (listeners.size === 0) {
+      stopWatching?.()
+      stopWatching = null
+    }
+  }
+}
+
+/** The theme currently on screen, and a function to switch it. */
 export function useTheme() {
   const theme = useSyncExternalStore(subscribe, readTheme)
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark')
