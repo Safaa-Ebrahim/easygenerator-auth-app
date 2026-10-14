@@ -8,6 +8,7 @@ import { Button } from '../components/Button'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { LogOutIcon } from '../components/icons'
 import { Spinner } from '../components/Spinner'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { UserBadge } from '../components/UserBadge'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -54,8 +55,9 @@ export function ApplicationPage() {
     <div className="flex min-h-svh flex-col">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8 sm:py-4">
         <BrandMark />
-        <div className="flex min-w-0 items-center gap-4">
-          {session && <UserBadge name={session.user.name} email={session.user.email} />}
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+          <ThemeToggle />
+          {session &&<UserBadge name={session.user.name} email={session.user.email} />}
           <Button
             variant="soft"
             className="px-3"
