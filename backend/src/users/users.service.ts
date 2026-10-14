@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   NotFoundException,
@@ -20,20 +19,13 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const email = createUserDto.email.trim().toLowerCase();
 
-    const existingUser = await this.userModel
-      .findOne({ email })
-      .exec();
+    const existingUser = await this.userModel.findOne({ email }).exec();
 
     if (existingUser) {
-      throw new ConflictException(
-        'Email is already registered',
-      );
+      throw new ConflictException('Email is already registered');
     }
 
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      12,
-    );
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
 
     const user = new this.userModel({
       name: createUserDto.name.trim(),
@@ -53,23 +45,18 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.userModel
-      .find()
-      .select('-password')
-      .exec();
+    return this.userModel.find().select('-password').exec();
   }
 
   async findByEmail(email: string) {
     return this.userModel
       .findOne({ email: email.trim().toLowerCase() })
+      .select('+password')
       .exec();
   }
 
   async findById(id: string) {
-    const user = await this.userModel
-      .findById(id)
-      .select('-password')
-      .exec();
+    const user = await this.userModel.findById(id).select('-password').exec();
 
     if (!user) {
       throw new NotFoundException('User not found');
