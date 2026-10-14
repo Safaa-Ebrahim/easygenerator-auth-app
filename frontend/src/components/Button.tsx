@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '../lib/cn'
 import { Spinner } from './Spinner'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger'
+export type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'danger'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
@@ -16,6 +16,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantClasses: Record<ButtonVariant, string> = {
   primary: 'border-transparent bg-primary text-on-primary enabled:hover:bg-primary-hover',
   secondary: 'border-line-strong bg-surface text-fg enabled:hover:bg-canvas',
+  soft: 'border-transparent bg-soft text-fg enabled:hover:bg-soft-hover',
   danger: 'border-transparent bg-danger-solid text-white enabled:hover:bg-danger-solid-hover',
 }
 
