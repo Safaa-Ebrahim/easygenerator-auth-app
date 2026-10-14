@@ -74,20 +74,28 @@ describe('UsersService', () => {
 
       const [saved] = FakeUserModel.saved;
       expect(saved.password).not.toBe('secret1!');
-      await expect(bcrypt.compare('secret1!', saved.password)).resolves.toBe(true);
+      await expect(bcrypt.compare('secret1!', saved.password)).resolves.toBe(
+        true,
+      );
     });
 
     it('rejects an email that is already registered', async () => {
       FakeUserModel.existing = { email: 'jane@example.com' };
 
-      await expect(service.create(input)).rejects.toBeInstanceOf(ConflictException);
+      await expect(service.create(input)).rejects.toBeInstanceOf(
+        ConflictException,
+      );
       expect(FakeUserModel.saved).toHaveLength(0);
     });
 
     it('maps a duplicate-key error from a concurrent sign-up to a conflict', async () => {
-      FakeUserModel.saveError = Object.assign(new Error('E11000'), { code: 11000 });
+      FakeUserModel.saveError = Object.assign(new Error('E11000'), {
+        code: 11000,
+      });
 
-      await expect(service.create(input)).rejects.toBeInstanceOf(ConflictException);
+      await expect(service.create(input)).rejects.toBeInstanceOf(
+        ConflictException,
+      );
     });
 
     it('rethrows other save errors unchanged', async () => {
