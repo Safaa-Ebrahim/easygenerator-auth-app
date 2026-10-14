@@ -82,13 +82,26 @@ describe('protected application page', () => {
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Log out' }))
 
-    const dialog = screen.getByRole('alertdialog', { name: 'Log out?' })
+    const dialog = screen.getByRole('alertdialog', { name: 'Confirm Logout' })
     expect(within(dialog).getByRole('button', { name: 'Cancel' })).toHaveFocus()
     await user.click(within(dialog).getByRole('button', { name: 'Log out' }))
 
     expect(await screen.findByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
     expect(await screen.findByText('You have been signed out.')).toBeInTheDocument()
     expect(window.sessionStorage.getItem('auth.session')).toBeNull()
+  })
+
+  it('closes the logout dialog with the close button', async () => {
+    storeSession()
+    mockFetch(profileOk)
+    const { user } = renderApp('/app')
+
+    await screen.findByRole('heading', { name: 'Welcome to the application.' })
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Close' }))
+
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    expect(window.sessionStorage.getItem('auth.session')).not.toBeNull()
   })
 
   it('keeps the session when logout is cancelled', async () => {
