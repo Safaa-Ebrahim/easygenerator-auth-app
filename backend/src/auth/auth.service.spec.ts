@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -11,8 +11,8 @@ const PASSWORD = 'secret1!';
 describe('AuthService', () => {
   let passwordHash: string;
   let usersService: {
-    create: jest.Mock<UsersService['create']>;
-    findByEmail: jest.Mock<(email: string) => Promise<unknown>>;
+    create: Mock<UsersService['create']>;
+    findByEmail: Mock<(email: string) => Promise<unknown>>;
   };
   let jwtService: JwtService;
   let service: AuthService;
@@ -22,7 +22,7 @@ describe('AuthService', () => {
   });
 
   beforeEach(() => {
-    usersService = { create: jest.fn(), findByEmail: jest.fn() };
+    usersService = { create: vi.fn(), findByEmail: vi.fn() };
     jwtService = new JwtService({
       secret: 'test-secret',
       signOptions: { expiresIn: 600 },
@@ -30,7 +30,7 @@ describe('AuthService', () => {
     service = new AuthService(
       usersService as unknown as UsersService,
       jwtService,
-      new ConfigService({ JWT_EXPIRES_IN_SECONDS: '600' }),
+      new ConfigService({ JWT_EXPIRES_IN_SECONDS: 600 }),
     );
   });
 
