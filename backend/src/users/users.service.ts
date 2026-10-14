@@ -1,13 +1,17 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './schemas/user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
+
+export interface CreateUserInput {
+  name: string;
+  email: string;
+  password: string;
+}
+
+// MongoDB's error code for a unique-index violation.
+const DUPLICATE_KEY_ERROR = 11000;
 
 @Injectable()
 export class UsersService {
@@ -16,8 +20,8 @@ export class UsersService {
     private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const email = createUserDto.email.trim().toLowerCase();
+  async create(input: CreateUserInput) {
+    const email = input.email.trim().toLowerCase();
 
     const existingUser = await this.userModel.findOne({ email }).exec();
 
@@ -25,15 +29,24 @@ export class UsersService {
       throw new ConflictException('Email is already registered');
     }
 
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
+    const hashedPassword = await bcrypt.hash(input.password, 12);
 
     const user = new this.userModel({
-      name: createUserDto.name.trim(),
+      name: input.name.trim(),
       email,
       password: hashedPassword,
     });
 
-    await user.save();
+    try {
+      await user.save();
+    } catch (error) {
+      // Two concurrent sign-ups can both pass the check above; the unique
+      // index then rejects the second one.
+      if (isDuplicateKeyError(error)) {
+        throw new ConflictException('Email is already registered');
+      }
+      throw error;
+    }
 
     return {
       id: user._id.toString(),
@@ -44,24 +57,19 @@ export class UsersService {
     };
   }
 
-  async findAll() {
-    return this.userModel.find().select('-password').exec();
-  }
-
   async findByEmail(email: string) {
     return this.userModel
       .findOne({ email: email.trim().toLowerCase() })
       .select('+password')
       .exec();
   }
+}
 
-  async findById(id: string) {
-    const user = await this.userModel.findById(id).select('-password').exec();
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
-  }
+function isDuplicateKeyError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    error.code === DUPLICATE_KEY_ERROR
+  );
 }
