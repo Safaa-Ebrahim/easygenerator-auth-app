@@ -1,18 +1,32 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { describe, expect, it, jest } from '@jest/globals';
 import { AuthController } from './auth.controller';
+import type { AuthService } from './auth.service';
 
 describe('AuthController', () => {
-  let controller: AuthController;
+  const authService = {
+    signup: jest.fn<(dto: unknown) => Promise<string>>(),
+    signin: jest.fn<(dto: unknown) => Promise<string>>(),
+  };
+  const controller = new AuthController(authService as unknown as AuthService);
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-    }).compile();
+  it('delegates sign-up and sign-in to AuthService', async () => {
+    authService.signup.mockResolvedValue('signed-up');
+    authService.signin.mockResolvedValue('signed-in');
+    const signup = { name: 'Jane', email: 'jane@example.com', password: 'secret1!' };
+    const signin = { email: 'jane@example.com', password: 'secret1!' };
 
-    controller = module.get<AuthController>(AuthController);
+    await expect(controller.signup(signup)).resolves.toBe('signed-up');
+    await expect(controller.signin(signin)).resolves.toBe('signed-in');
+    expect(authService.signup).toHaveBeenCalledWith(signup);
+    expect(authService.signin).toHaveBeenCalledWith(signin);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('returns the authenticated user from the request on /profile', () => {
+    const user = { userId: 'user-id', email: 'jane@example.com' };
+
+    expect(controller.getProfile({ user })).toEqual({
+      message: 'Protected endpoint accessed successfully',
+      user,
+    });
   });
 });
