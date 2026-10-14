@@ -14,7 +14,7 @@ export interface TextFieldProps
 }
 
 const inputClasses = cn(
-  'min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-fg',
+  'min-h-11 w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-fg placeholder:text-muted',
   'motion-safe:transition-[border-color,box-shadow] hover:border-muted',
   'focus-visible:border-focus focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/30',
   'aria-[invalid=true]:border-danger aria-[invalid=true]:focus-visible:ring-danger/25',
