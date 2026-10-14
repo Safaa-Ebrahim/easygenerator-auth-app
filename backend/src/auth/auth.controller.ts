@@ -58,7 +58,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'Returns the user identified by the token.' })
-  @ApiUnauthorizedResponse({ description: 'Missing, invalid or expired token.' })
+  @ApiUnauthorizedResponse({
+    description: 'Missing, invalid or expired token.',
+  })
   getProfile(@Request() req: { user: { userId: string; email: string } }) {
     return {
       message: 'Protected endpoint accessed successfully',
