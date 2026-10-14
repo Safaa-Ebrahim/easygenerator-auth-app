@@ -35,33 +35,39 @@
   --shadow-card: 0 1px 2px rgb(16 24 40 / 0.05), 0 12px 32px -8px rgb(16 24 40 / 0.12);
 }
 
+/*
+ * Theme: <html data-theme="light|dark"> is set before first paint by the
+ * inline script in index.html (saved choice, else the system preference) and
+ * kept in sync by src/theme/theme.ts. `dark:` utilities follow the same switch.
+ */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 @layer base {
   :root {
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-canvas: #0f1218;
-      --color-surface: #171b24;
-      --color-line: #2a303d;
-      --color-line-strong: #424a5c;
-      --color-soft: #232838;
-      --color-soft-hover: #2d3345;
-      --color-brand-soft: #3d2219;
-      --color-brand-strong: #ffb59a;
-      --color-fg: #eef0f5;
-      --color-muted: #a2aaba;
-      --color-primary: #8b85ff;
-      --color-primary-hover: #a5a0ff;
-      --color-on-primary: #11131a;
-      --color-focus: #a5a0ff;
-      --color-danger: #fda29b;
-      --color-danger-bg: #2d1414;
-      --color-danger-line: #6b2a25;
-      --color-success: #75e0a7;
-      --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -8px rgb(0 0 0 / 0.5);
-    }
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-canvas: #0f1218;
+    --color-surface: #171b24;
+    --color-line: #2a303d;
+    --color-line-strong: #424a5c;
+    --color-soft: #232838;
+    --color-soft-hover: #2d3345;
+    --color-brand-soft: #3d2219;
+    --color-brand-strong: #ffb59a;
+    --color-fg: #eef0f5;
+    --color-muted: #a2aaba;
+    --color-primary: #8b85ff;
+    --color-primary-hover: #a5a0ff;
+    --color-on-primary: #11131a;
+    --color-focus: #a5a0ff;
+    --color-danger: #fda29b;
+    --color-danger-bg: #2d1414;
+    --color-danger-line: #6b2a25;
+    --color-success: #75e0a7;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -8px rgb(0 0 0 / 0.5);
   }
 
   body {
