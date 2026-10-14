@@ -39,4 +39,6 @@ afterEach(() => {
   toast.dismiss()
   cleanup()
   window.sessionStorage.clear()
+  window.localStorage.clear()
+  delete document.documentElement.dataset.theme
 })
