@@ -44,7 +44,7 @@ export function TextField({
         <input
           {...inputProps}
           id={inputId}
-          className={cn(inputClasses, trailing ? 'pr-19' : null)}
+          className={cn(inputClasses, trailing ? 'pr-11' : null)}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
         />
