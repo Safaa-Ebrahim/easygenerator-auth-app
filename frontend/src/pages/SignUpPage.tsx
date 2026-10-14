@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { toast } from 'sonner'
 import { signUp } from '../api/auth'
 import { describeApiError } from '../api/client'
 import type { SignInLocationState } from '../auth/locationState'
@@ -27,7 +28,8 @@ export function SignUpPage() {
     try {
       const trimmedEmail = email.trim()
       await signUp({ name: name.trim(), email: trimmedEmail, password })
-      const state: SignInLocationState = { notice: 'registered', email: trimmedEmail }
+      toast.success('Your account has been created. Please sign in.')
+      const state: SignInLocationState = { email: trimmedEmail }
       navigate(ROUTES.signIn, { replace: true, state })
     } catch (error) {
       setFormError(
@@ -48,7 +50,7 @@ export function SignUpPage() {
         </p>
       }
     >
-      {formError && <Alert variant="error">{formError}</Alert>}
+      {formError && <Alert>{formError}</Alert>}
 
       <form className="flex flex-col gap-4" noValidate onSubmit={onSubmit}>
         <TextField

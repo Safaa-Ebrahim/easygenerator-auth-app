@@ -53,10 +53,10 @@ describe('SignUpPage', () => {
     await fillForm(user, { name: '  Ada Lovelace ', email: ' ada@example.com ' })
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
+    expect(await screen.findByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
     expect(
       await screen.findByText('Your account has been created. Please sign in.'),
     ).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
     expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
     expect(screen.getByLabelText('Password')).toHaveValue('')
 
