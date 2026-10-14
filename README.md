@@ -4,7 +4,7 @@ Authentication demo with a React and TypeScript frontend and a NestJS backend.
 
 ## Project structure
 
-- `frontent/` - React, TypeScript, and Vite application.
+- `frontend/` - React, TypeScript, and Vite application.
 - `backend/` - NestJS API and MongoDB integration.
 
 ## Run locally
@@ -12,7 +12,7 @@ Authentication demo with a React and TypeScript frontend and a NestJS backend.
 Install dependencies in each application directory:
 
 ```bash
-cd frontent
+cd frontend
 npm install
 npm run dev
 ```
