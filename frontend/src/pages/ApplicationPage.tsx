@@ -6,7 +6,9 @@ import { Alert } from '../components/Alert'
 import { BrandMark } from '../components/BrandMark'
 import { Button } from '../components/Button'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { LogOutIcon } from '../components/icons'
 import { Spinner } from '../components/Spinner'
+import { UserBadge } from '../components/UserBadge'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 const statusClasses = 'flex max-w-110 flex-col items-center gap-4 text-center text-muted'
@@ -52,14 +54,18 @@ export function ApplicationPage() {
     <div className="flex min-h-svh flex-col">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8 sm:py-4">
         <BrandMark />
-        <div className="flex min-w-0 items-center gap-3">
-          {session && (
-            <span className="hidden truncate text-sm text-muted min-[480px]:inline">
-              {session.user.email}
+        <div className="flex min-w-0 items-center gap-4">
+          {session && <UserBadge name={session.user.name} email={session.user.email} />}
+          <Button
+            variant="soft"
+            className="px-3"
+            onClick={() => setConfirmingLogout(true)}
+          >
+            <span className="flex items-center gap-2">
+              <LogOutIcon size={18} />
+              {/* Icon-only on mobile; the label stays available to screen readers. */}
+              <span className="max-[479px]:sr-only">Log out</span>
             </span>
-          )}
-          <Button variant="secondary" onClick={() => setConfirmingLogout(true)}>
-            Log out
           </Button>
         </div>
       </header>
