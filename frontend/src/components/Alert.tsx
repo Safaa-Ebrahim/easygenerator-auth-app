@@ -1,25 +1,15 @@
 import type { ReactNode } from 'react'
-import { cn } from '../lib/cn'
 
-type AlertVariant = 'error' | 'success' | 'info'
-
-interface AlertProps {
-  variant: AlertVariant
-  children: ReactNode
-}
-
-const variantClasses: Record<AlertVariant, string> = {
-  error: 'border-danger-line bg-danger-bg text-danger',
-  success: 'border-success-line bg-success-bg text-success',
-  info: 'border-info-line bg-info-bg text-info',
-}
-
-/** Errors interrupt assistive tech (role="alert"); other notices are polite. */
-export function Alert({ variant, children }: AlertProps) {
+/**
+ * Inline error shown above a form or failed view. It stays until the user
+ * acts, unlike transient notices, which are toasts. role="alert" announces it
+ * immediately to assistive tech.
+ */
+export function Alert({ children }: { children: ReactNode }) {
   return (
     <div
-      className={cn('rounded-lg border px-4 py-3 text-[0.95rem]', variantClasses[variant])}
-      role={variant === 'error' ? 'alert' : 'status'}
+      className="rounded-lg border border-danger-line bg-danger-bg px-4 py-3 text-[0.95rem] text-danger"
+      role="alert"
     >
       {children}
     </div>
