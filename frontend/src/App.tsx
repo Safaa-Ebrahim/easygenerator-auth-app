@@ -5,8 +5,11 @@ import { ApplicationPage } from './pages/ApplicationPage'
 import { SignInPage } from './pages/SignInPage'
 import { SignUpPage } from './pages/SignUpPage'
 import { ROUTES } from './paths'
+import { useTheme } from './theme/theme'
 
 function App() {
+  const { theme } = useTheme()
+
   return (
     <>
       <Routes>
@@ -37,7 +40,7 @@ function App() {
         <Route path="*" element={<Navigate to={ROUTES.app} replace />} />
       </Routes>
       {/* Transient notices (signed out, session expired, account created). */}
-      <Toaster position="top-center" theme="system" richColors closeButton />
+      <Toaster position="top-center" theme={theme} richColors closeButton />
     </>
   )
 }
