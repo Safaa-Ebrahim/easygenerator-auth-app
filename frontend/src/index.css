@@ -15,6 +15,9 @@
   --color-line-strong: #b9c0cf;
   --color-soft: #eef0fb;
   --color-soft-hover: #e1e4f5;
+  /* Avatar: tints of the Easygenerator orange (#FC794B) with AA-contrast text. */
+  --color-brand-soft: #ffe9e0;
+  --color-brand-strong: #b93815;
   --color-fg: #1b2130;
   --color-muted: #5b6477;
   --color-primary: #4f46e5;
@@ -45,6 +48,8 @@
       --color-line-strong: #424a5c;
       --color-soft: #232838;
       --color-soft-hover: #2d3345;
+      --color-brand-soft: #3d2219;
+      --color-brand-strong: #ffb59a;
       --color-fg: #eef0f5;
       --color-muted: #a2aaba;
       --color-primary: #8b85ff;
