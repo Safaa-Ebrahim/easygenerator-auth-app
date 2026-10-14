@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from 'react'
 import { Button, type ButtonVariant } from './Button'
+import { XIcon } from './icons'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -57,22 +58,32 @@ export function ConfirmDialog({
       onClick={(event) => {
         if (event.target === event.currentTarget) onCancel()
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-sm rounded-2xl border border-line bg-surface p-0 text-fg shadow-card backdrop:bg-black/50"
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-line bg-surface p-0 text-fg shadow-card backdrop:bg-black/50"
     >
       <div className="flex flex-col gap-5 p-6">
         <div className="flex flex-col gap-1.5">
-          <h2 id={titleId} className="text-lg font-bold">
-            {title}
-          </h2>
+          <div className="flex items-start justify-between gap-4">
+            <h2 id={titleId} className="text-lg font-bold">
+              {title}
+            </h2>
+            <button
+              type="button"
+              onClick={onCancel}
+              aria-label="Close"
+              className="-mt-1 -mr-2 grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-muted hover:bg-soft hover:text-fg motion-safe:transition-colors"
+            >
+              <XIcon size={18} />
+            </button>
+          </div>
           <p id={descriptionId} className="text-muted">
             {description}
           </p>
         </div>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="secondary" onClick={onCancel} data-initial-focus>
+        <div className="flex justify-end gap-3">
+          <Button variant="soft" className="rounded-xl" onClick={onCancel} data-initial-focus>
             {cancelLabel}
           </Button>
-          <Button variant={confirmVariant} onClick={onConfirm}>
+          <Button variant={confirmVariant} className="rounded-xl" onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>
