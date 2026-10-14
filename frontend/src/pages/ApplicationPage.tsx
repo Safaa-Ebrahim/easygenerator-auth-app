@@ -5,6 +5,7 @@ import { useAuth } from '../auth/useAuth'
 import { Alert } from '../components/Alert'
 import { BrandMark } from '../components/BrandMark'
 import { Button } from '../components/Button'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Spinner } from '../components/Spinner'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -20,6 +21,7 @@ export function ApplicationPage() {
   const { session, signOut } = useAuth()
   const [state, setState] = useState<ProfileState>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
+  const [confirmingLogout, setConfirmingLogout] = useState(false)
 
   // Confirm the token with the backend's protected endpoint before showing
   // the page; a 401 means it is expired or invalid, so end the session.
@@ -56,11 +58,20 @@ export function ApplicationPage() {
               {session.user.email}
             </span>
           )}
-          <Button variant="secondary" onClick={() => signOut('user')}>
+          <Button variant="secondary" onClick={() => setConfirmingLogout(true)}>
             Log out
           </Button>
         </div>
       </header>
+
+      <ConfirmDialog
+        open={confirmingLogout}
+        title="Log out?"
+        description="You will need to sign in again to access the application."
+        confirmLabel="Log out"
+        onConfirm={() => signOut('user')}
+        onCancel={() => setConfirmingLogout(false)}
+      />
 
       <main className="grid flex-1 place-items-center px-4 py-8">
         {state.status === 'loading' && (
@@ -72,7 +83,7 @@ export function ApplicationPage() {
 
         {state.status === 'error' && (
           <div className={statusClasses}>
-            <Alert variant="error">{state.message}</Alert>
+            <Alert>{state.message}</Alert>
             <Button onClick={retry}>Try again</Button>
           </div>
         )}

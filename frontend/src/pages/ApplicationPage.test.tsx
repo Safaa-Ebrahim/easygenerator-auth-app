@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { jsonResponse, mockFetch, renderApp, storeSession, testUser } from '../test/utils'
 
@@ -73,16 +73,54 @@ describe('protected application page', () => {
     ).toBeInTheDocument()
   })
 
-  it('logs out, clears the stored session and returns to sign-in', async () => {
+  it('asks for confirmation, then logs out and returns to sign-in', async () => {
+    storeSession()
+    mockFetch(profileOk)
+    const { user } = renderApp('/app')
+
+    await screen.findByRole('heading', { name: 'Welcome to the application.' })
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+
+    const dialog = screen.getByRole('alertdialog', { name: 'Log out?' })
+    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toHaveFocus()
+    await user.click(within(dialog).getByRole('button', { name: 'Log out' }))
+
+    expect(await screen.findByRole('heading', { name: 'Welcome back' })).toBeInTheDocument()
+    expect(await screen.findByText('You have been signed out.')).toBeInTheDocument()
+    expect(window.sessionStorage.getItem('auth.session')).toBeNull()
+  })
+
+  it('keeps the session when logout is cancelled', async () => {
     storeSession()
     mockFetch(profileOk)
     const { user } = renderApp('/app')
 
     await screen.findByRole('heading', { name: 'Welcome to the application.' })
     await user.click(screen.getByRole('button', { name: 'Log out' }))
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    expect(await screen.findByText('You have been signed out.')).toBeInTheDocument()
-    expect(window.sessionStorage.getItem('auth.session')).toBeNull()
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Welcome to the application.' })).toBeInTheDocument()
+    expect(window.sessionStorage.getItem('auth.session')).not.toBeNull()
+  })
+
+  it('lets the user dismiss the signed-out notice', async () => {
+    storeSession()
+    mockFetch(profileOk)
+    const { user } = renderApp('/app')
+
+    await screen.findByRole('heading', { name: 'Welcome to the application.' })
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Log out' }))
+
+    const notice = await screen.findByText('You have been signed out.')
+    const toastItem = notice.closest('li')!
+    await user.click(within(toastItem).getByRole('button', { name: /close/i }))
+
+    await waitFor(() =>
+      expect(screen.queryByText('You have been signed out.')).not.toBeInTheDocument(),
+    )
   })
 
   it('sends signed-in users away from the auth forms', async () => {
