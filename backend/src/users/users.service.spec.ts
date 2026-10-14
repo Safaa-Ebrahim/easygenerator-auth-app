@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import type { Model } from 'mongoose';
@@ -10,7 +10,7 @@ class FakeUserModel {
   static existing: unknown = null;
   static saveError: unknown = null;
   static saved: FakeUserModel[] = [];
-  static findOne = jest.fn((filter: { email: string }) => {
+  static findOne = vi.fn((filter: { email: string }) => {
     void filter;
     const query = {
       select: () => query,
