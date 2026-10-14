@@ -12,7 +12,11 @@ describe('AuthController', () => {
   it('delegates sign-up and sign-in to AuthService', async () => {
     authService.signup.mockResolvedValue('signed-up');
     authService.signin.mockResolvedValue('signed-in');
-    const signup = { name: 'Jane', email: 'jane@example.com', password: 'secret1!' };
+    const signup = {
+      name: 'Jane',
+      email: 'jane@example.com',
+      password: 'secret1!',
+    };
     const signin = { email: 'jane@example.com', password: 'secret1!' };
 
     await expect(controller.signup(signup)).resolves.toBe('signed-up');
