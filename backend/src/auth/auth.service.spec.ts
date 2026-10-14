@@ -1,4 +1,12 @@
-import { beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import {
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from 'vitest';
 import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -45,7 +53,11 @@ describe('AuthService', () => {
     usersService.create.mockResolvedValue(user);
 
     await expect(
-      service.signup({ name: 'Jane', email: 'jane@example.com', password: PASSWORD }),
+      service.signup({
+        name: 'Jane',
+        email: 'jane@example.com',
+        password: PASSWORD,
+      }),
     ).resolves.toEqual({ message: 'User registered successfully', user });
   });
 
@@ -78,7 +90,10 @@ describe('AuthService', () => {
         iat: number;
         exp: number;
       }>(result.accessToken);
-      expect(payload).toMatchObject({ sub: 'user-id', email: 'jane@example.com' });
+      expect(payload).toMatchObject({
+        sub: 'user-id',
+        email: 'jane@example.com',
+      });
       // The token's real lifetime matches the expiresIn reported to the client.
       expect(payload.exp - payload.iat).toBe(result.expiresIn);
     });
