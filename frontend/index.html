@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Sign up and sign in to the Easygenerator application." />
     <title>Easygenerator</title>
+    <script>
+      // Apply the theme before first paint to avoid a light/dark flash.
+      // Keep in sync with src/theme/theme.ts.
+      ;(function () {
+        var theme
+        try {
+          theme = localStorage.getItem('theme')
+        } catch (e) {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
